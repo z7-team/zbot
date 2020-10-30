@@ -1,3 +1,4 @@
-/node_modules
-/config.json
-/.vscode
+node_modules
+config.json
+.vscode
+z7-bot-db-auth.json
