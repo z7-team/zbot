@@ -73,12 +73,10 @@ client.on('message', async (message) => {
 		}
 		const userRef = db.collection(message.guild.name).doc(mention.id);
 		const snapshot = await userRef.get();
-		let karma = snapshot.data()['karma'];
+		const data = snapshot.data();
+		let karma = data && data.karma || 0;
 
-		if (karma === undefined) {
-			karma = 0;
-		}
-		else if (args[0] === '++') {
+		if (args[0] === '++') {
 			karma++;
 		}
 		else if (args[0] === '--') {
