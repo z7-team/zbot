@@ -69,6 +69,7 @@ client.on('message', async (message) => {
 		const mention = message.mentions.users.first();
 		if (message.author.id == mention.id) {
 			message.channel.send('Can\'t give karma to yourself');
+			return;
 		}
 		const userRef = db.collection(message.guild.name).doc(mention.id);
 		const snapshot = await userRef.get();
@@ -90,6 +91,9 @@ client.on('message', async (message) => {
 
 		const pointStr = karma === 1 ? 'point' : 'points';
 		await message.channel.send(`${mention.username} you now have ${karma} ${pointStr}`);
+	}
+	else if (command == 'top') {
+		message.channel.send('https://www.youtube.com/watch?v=Vppbdf-qtGU');
 	}
 	else {
 		message.channel.send('Not a command. Type zz help for commands.');
