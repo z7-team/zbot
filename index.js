@@ -109,9 +109,20 @@ client.on('message', async (message) => {
 			});
 		}
 		else if (args.length == 1) {
-			await (await r.getSubreddit(args[0])).getTop({ time: 'day', limit: 1 }).map(post=>{
+			await r.getSubreddit(args[0]).getTop({ time: 'day', limit: 1 }).map(post=>{
 				message.channel.send(post.url);
 			});
+		}
+		else if (args.length == 2 && args[1].length == 1) {
+			await r.getSubreddit(args[0]).getTop({ time:'day', limit: parseInt(args[1]) }).map(post=>{
+				// for (var i = 0; i < parseInt(args[1]); i++) {
+				// 	message.channel.send(post[i].url);
+				// }
+				message.channel.send(post.url);
+			});
+		}
+		else{
+			message.channel.send('Please check your arguments and try again.');
 		}
 	}
 	else {
