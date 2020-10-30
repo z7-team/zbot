@@ -1,8 +1,7 @@
-require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const { prefix, token } = require('./config.json');
 
-const TOKEN = process.env.DISCORD_TOKEN;
 
 client.once('ready', () => {
 	console.log('Ready!');
@@ -10,12 +9,13 @@ client.once('ready', () => {
 
 
 client.on('message', message =>{
-	if (message.content == 'zz javascript') {
+	if (message.content.startsWith(prefix + 'javascript')) {
 		message.channel.send('Welcome to zBot! Javascript edition!');
 	}
-	else if (message.content == 'zz escape') {
+	else if (message.content.startsWith(prefix + 'escape')) {
 		message.channel.send('ВЫ ДОЛЖНЫ БЕЖАТЬ ИЗ ТАРЬКА!');
 	}
 });
 
-client.login(TOKEN);
+
+client.login(token);
