@@ -33,6 +33,9 @@ client.on('message', message =>{
 		}
 		message.channel.send(msg);
 	}
+	else if (command == 'top') {
+		message.channel.send('https://www.youtube.com/watch?v=Vppbdf-qtGU');
+	}
 	else {
 		message.channel.send('Not a command. Type zz help for commands.');
 	}
