@@ -5,17 +5,17 @@ const client = new Discord.Client();
 const TOKEN = process.env.DISCORD_TOKEN;
 
 client.once('ready', () => {
-    console.log('Ready!');
+	console.log('Ready!');
 });
 
 
 client.on('message', message =>{
-    if (message.content == 'zz javascript'){
-        message.channel.send('Welcome to zBot! Javascript edition!');
-    }
-    else if (message.content == 'zz escape'){
-        message.channel.send('ВЫ ДОЛЖНЫ БЕЖАТЬ ИЗ ТАРЬКА!')
-    }
-})
+	if (message.content == 'zz javascript') {
+		message.channel.send('Welcome to zBot! Javascript edition!');
+	}
+	else if (message.content == 'zz escape') {
+		message.channel.send('ВЫ ДОЛЖНЫ БЕЖАТЬ ИЗ ТАРЬКА!');
+	}
+});
 
-client.login(TOKEN)
+client.login(TOKEN);
