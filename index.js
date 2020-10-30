@@ -18,4 +18,4 @@ client.on('message', message =>{
     }
 })
 
-client.login('NzY4MjI2MDMxNzM1MDEzMzg3.X49YPg.hUNlsdHm3yIn5AuwKuG3Z05eLRw')
+client.login(TOKEN)
