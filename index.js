@@ -125,6 +125,9 @@ client.on('message', async (message) => {
 			message.channel.send('Please check your arguments and try again.');
 		}
 	}
+	else if (command == 'help') {
+		message.channel.send('Mark does not want to make the help command right now. Try again later.');
+	}
 	else {
 		message.channel.send('Not a command. Type zz help for commands.');
 	}
