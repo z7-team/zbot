@@ -12,7 +12,8 @@
 	"license": "ISC",
 	"dependencies": {
 		"discord.js": "^12.4.1",
-		"firebase-admin": "^9.3.0"
+		"firebase-admin": "^9.3.0",
+		"snoowrap": "^1.21.0"
 	},
 	"devDependencies": {
 		"eslint": "^7.12.1",
