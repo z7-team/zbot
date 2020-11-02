@@ -41,7 +41,7 @@ client.on('message', async (message) => {
 	}
 	else if (command == 'roll') {
 		if (!args.length) {
-			message.channel.send('Please include one # argument for dice to be rolled.');
+			message.channel.send('[ ' + (Math.floor(Math.random() * 6) + 1) + ' ] ');
 			return;
 		}
 		let msg = '';
