@@ -125,11 +125,28 @@ client.on('message', async (message) => {
 			message.channel.send('Please check your arguments and try again.');
 		}
 	}
-	else if (command == 'help') {
-		message.channel.send('Mark does not want to make the help command right now. Try again later.');
+	else if (command == 'splou') {
+		var d = new Date();
+		if (d.getHours == 0) {
+			message.channel.send('It is time to splou.');
+		}
+		else{
+			message.channel.send('It is not time to splou.');
+		}
 	}
 	else {
-		message.channel.send('Not a command. Type zz help for commands.');
+		message.channel.send('Available Commands: '
+		+ '\n\tzz javascript: Welcome message.'
+		+ '\n\tzz members: Displays total members and total members online.'
+		+ '\n\tzz roll [n]: Rolls n dice. Leave blank for 1.'
+		+ '\n\tzz escape: YOU MUST ESCAPE FROM THE TARKOV!'
+		+ '\n\tzz rank: Displays karma leaderboard for server.'
+		+ '\n\tzz @member ++: Add karma to user. Cannot add karma to yourself.'
+		+ '\n\tzz @member --: Subtract karma from user.'
+		+ '\n\tzz top: Danna dan-dan dan-dan dan-nana-nan.'
+		+ '\n\tzz reddit [subreddit] [n]: Gets n top posts from subreddit for the day.'
+		+ '\n\tzz splou: Tryna splou?'
+		+ '\n\tzz help: Displays commands.');
 	}
 });
 
