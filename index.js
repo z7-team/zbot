@@ -26,6 +26,9 @@ client.once('ready', () => {
 
 
 client.on('message', async (message) => {
+	if (message.content.toLowerCase() == 'm o n k e') {
+		message.channel.send('Reject modernism, embrace M O N K E');
+	}
 	if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 	const args = message.content.slice(prefix.length).trim().split(' ');
 	const command = args.shift().toLowerCase();
@@ -127,7 +130,7 @@ client.on('message', async (message) => {
 	}
 	else if (command == 'splou') {
 		var d = new Date();
-		if (d.getHours == 0) {
+		if (d.getHours() >= 0 && d.getHours() < 2) {
 			message.channel.send('It is time to splou.');
 		}
 		else{
