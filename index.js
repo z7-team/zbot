@@ -24,6 +24,9 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
+client.on('guildMemberAdd', member =>{
+	member.guild.channels.get('channelID').send('Welcome ' + member.nickname + ' to the Z7 army!');
+});
 
 client.on('message', async (message) => {
 	if (message.content.toLowerCase() == 'm o n k e') {
