@@ -75,7 +75,6 @@ client.on('message', async (message) => {
 			.setTitle('Rank Leaderboard')
 			.setDescription(leaderboard);
 
-
 		await message.channel.send(
 			embed,
 		);
@@ -143,6 +142,33 @@ client.on('message', async (message) => {
 		else {
 			message.channel.send('It is not time to splou.');
 		}
+	}
+	else if (command == 'poll') {
+		const pollArgs = message.content.match(/(?:"[^"]*"|^[^"]*$)/g);
+		const options = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+		const pollQuestion = pollArgs.shift();
+		let pollString = '';
+		if (pollArgs.length > 10) {
+			message.channel.send('***You\'ve added too many choices, the limit is 10***');
+			return;
+		}
+		if (pollArgs.length === 0) {
+			message.channel.send('***Please add choices***');
+			return;
+		}
+		pollArgs.forEach((choice, index) => {
+			pollString += `${options[index]}: ${choice}\n\n`;
+		});
+
+		const embed = new Discord.MessageEmbed()
+			.setTitle(pollQuestion)
+			.setDescription(pollString);
+		console.log(pollArgs);
+		message.channel.send(embed).then(r => {
+			for(let i = 0; i < pollArgs.length; i++) {
+				r.react(options[i]);
+			}
+		});
 	}
 	else {
 		message.channel.send(
