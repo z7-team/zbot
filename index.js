@@ -183,6 +183,7 @@ client.on('message', async (message) => {
 			'\n\tzz top: Danna dan-dan dan-dan dan-nana-nan.' +
 			'\n\tzz reddit [subreddit] [n]: Gets n top posts from subreddit for the day.' +
 			'\n\tzz splou: Tryna splou?' +
+			'\n\tzz poll: Create a poll in the format \'zz poll "question" "choice1" "choice2"\'' +
 			'\n\tzz help: Displays commands.```',
 		);
 	}
