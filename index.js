@@ -82,7 +82,7 @@ client.on('message', async (message) => {
 	}
 	else if (args[0] == '++' || args[0] == '--') {
 		const mention = message.mentions.users.first();
-		if (message.author.id == mention.id) {
+		if (message.author.id == mention.id && args[0] === '++') {
 			message.channel.send('Can\'t give karma to yourself');
 			return;
 		}
@@ -132,11 +132,15 @@ client.on('message', async (message) => {
 		}
 	}
 	else if (command == 'splou') {
-		var d = new Date();
+		const date = new Date();
+		const d = new Date(
+			date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
+		);
+		console.log(d.getHours());
 		if (d.getHours() >= 0 && d.getHours() < 2) {
 			message.channel.send('It is time to splou.');
 		}
-		else{
+		else {
 			message.channel.send('It is not time to splou.');
 		}
 	}
