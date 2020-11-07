@@ -145,18 +145,20 @@ client.on('message', async (message) => {
 		}
 	}
 	else {
-		message.channel.send('Available Commands: '
-		+ '\n\tzz javascript: Welcome message.'
-		+ '\n\tzz members: Displays total members and total members online.'
-		+ '\n\tzz roll [n]: Rolls n dice. Leave blank for 1.'
-		+ '\n\tzz escape: YOU MUST ESCAPE FROM THE TARKOV!'
-		+ '\n\tzz rank: Displays karma leaderboard for server.'
-		+ '\n\tzz @member ++: Add karma to user. Cannot add karma to yourself.'
-		+ '\n\tzz @member --: Subtract karma from user.'
-		+ '\n\tzz top: Danna dan-dan dan-dan dan-nana-nan.'
-		+ '\n\tzz reddit [subreddit] [n]: Gets n top posts from subreddit for the day.'
-		+ '\n\tzz splou: Tryna splou?'
-		+ '\n\tzz help: Displays commands.');
+		message.channel.send(
+			'```Available Commands: ' +
+			'\n\tzz javascript: Welcome message.' +
+			'\n\tzz members: Displays total members and total members online.' +
+			'\n\tzz roll [n]: Rolls n dice. Leave blank for 1.' +
+			'\n\tzz escape: YOU MUST ESCAPE FROM THE TARKOV!' +
+			'\n\tzz rank: Displays karma leaderboard for server.' +
+			'\n\tzz @member ++: Add karma to user. Cannot add karma to yourself.' +
+			'\n\tzz @member --: Subtract karma from user.' +
+			'\n\tzz top: Danna dan-dan dan-dan dan-nana-nan.' +
+			'\n\tzz reddit [subreddit] [n]: Gets n top posts from subreddit for the day.' +
+			'\n\tzz splou: Tryna splou?' +
+			'\n\tzz help: Displays commands.```',
+		);
 	}
 });
 
