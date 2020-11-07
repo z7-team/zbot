@@ -1,7 +1,8 @@
 const Discord = require('discord.js');
 const admin = require('firebase-admin');
 const { prefix, token, rsecret, rid, reduser, rpass } = require('./config.json');
-var snoowrap = require('snoowrap');
+const snoowrap = require('snoowrap');
+const fetch = require('node-fetch');
 const serviceAccount = require('./z7-bot-db-auth.json');
 
 admin.initializeApp({
