@@ -104,6 +104,36 @@ client.on('message', async (message) => {
 		const pointStr = karma === 1 ? 'point' : 'points';
 		await message.channel.send(`${mention.username} you now have ${karma} ${pointStr}`);
 	}
+	else if (command == 'news') {
+		let bestStoryId;
+		await fetch('https://hacker-news.firebaseio.com/v0/beststories.json')
+			.then((response) => {
+				if (response.ok) {
+					return response.json();
+				}
+				throw new Error(response);
+			})
+			.then((response) => {
+				bestStoryId = response[0];
+			})
+			.catch(console.error);
+		await fetch(
+			`https://hacker-news.firebaseio.com/v0/item/${bestStoryId}.json`)
+			.then((response) => {
+				if (response.ok) {
+					return response.json();
+				}
+				throw new Error(response);
+			})
+			.then((response) => {
+				const embed = new Discord.MessageEmbed()
+					.setTitle(response.title)
+					.setURL(response.url)
+					.addFields({ name: 'HackerNews Score', value: response.score });
+				message.channel.send(embed);
+			})
+			.catch(console.error);
+	}
 	else if (command == 'top') {
 		message.channel.send('https://www.youtube.com/watch?v=Vppbdf-qtGU');
 	}
@@ -184,6 +214,7 @@ client.on('message', async (message) => {
 			'\n\tzz reddit [subreddit] [n]: Gets n top posts from subreddit for the day.' +
 			'\n\tzz splou: Tryna splou?' +
 			'\n\tzz poll: Create a poll in the format \'zz poll "question" "choice1" "choice2"\'' +
+			'\n\tzz news: Get current top HackerNews article.' +
 			'\n\tzz help: Displays commands.```',
 		);
 	}
