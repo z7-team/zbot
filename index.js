@@ -1,15 +1,19 @@
+// Z7 Discord Bot
+// index.js
 const Discord = require('discord.js');
 const admin = require('firebase-admin');
 const { prefix, token, rsecret, rid, reduser, rpass } = require('./config.json');
 var snoowrap = require('snoowrap');
 const serviceAccount = require('./z7-bot-db-auth.json');
 
+// firebase db
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
 });
-
 const db = admin.firestore();
 
+
+// initialize reddit api
 const r = new snoowrap({
 	userAgent: 'zbot reddit',
 	clientId: rid,
@@ -18,16 +22,19 @@ const r = new snoowrap({
 	password: rpass,
 });
 
+// initialize discord client
 const client = new Discord.Client();
 
 client.once('ready', () => {
 	console.log('Ready!');
 });
 
+// welcome message
 client.on('guildMemberAdd', member =>{
 	member.guild.channels.get('channelID').send('Welcome ' + member.nickname + ' to the Z7 army!');
 });
 
+// commands
 client.on('message', async (message) => {
 	if (message.content.toLowerCase() == 'm o n k e') {
 		message.channel.send('Reject modernism, embrace M O N K E');
