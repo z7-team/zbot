@@ -3,7 +3,8 @@
 const Discord = require('discord.js');
 const admin = require('firebase-admin');
 const { prefix, token, rsecret, rid, reduser, rpass } = require('./config.json');
-var snoowrap = require('snoowrap');
+const snoowrap = require('snoowrap');
+const fetch = require('node-fetch');
 const serviceAccount = require('./z7-bot-db-auth.json');
 
 // firebase db
@@ -82,14 +83,13 @@ client.on('message', async (message) => {
 			.setTitle('Rank Leaderboard')
 			.setDescription(leaderboard);
 
-
 		await message.channel.send(
 			embed,
 		);
 	}
 	else if (args[0] == '++' || args[0] == '--') {
 		const mention = message.mentions.users.first();
-		if (message.author.id == mention.id) {
+		if (message.author.id == mention.id && args[0] === '++') {
 			message.channel.send('Can\'t give karma to yourself');
 			return;
 		}
@@ -111,6 +111,36 @@ client.on('message', async (message) => {
 
 		const pointStr = karma === 1 ? 'point' : 'points';
 		await message.channel.send(`${mention.username} you now have ${karma} ${pointStr}`);
+	}
+	else if (command == 'news') {
+		let bestStoryId;
+		await fetch('https://hacker-news.firebaseio.com/v0/beststories.json')
+			.then((response) => {
+				if (response.ok) {
+					return response.json();
+				}
+				throw new Error(response);
+			})
+			.then((response) => {
+				bestStoryId = response[0];
+			})
+			.catch(console.error);
+		await fetch(
+			`https://hacker-news.firebaseio.com/v0/item/${bestStoryId}.json`)
+			.then((response) => {
+				if (response.ok) {
+					return response.json();
+				}
+				throw new Error(response);
+			})
+			.then((response) => {
+				const embed = new Discord.MessageEmbed()
+					.setTitle(response.title)
+					.setURL(response.url)
+					.addFields({ name: 'HackerNews Score', value: response.score });
+				message.channel.send(embed);
+			})
+			.catch(console.error);
 	}
 	else if (command == 'top') {
 		message.channel.send('https://www.youtube.com/watch?v=Vppbdf-qtGU');
@@ -139,27 +169,62 @@ client.on('message', async (message) => {
 		}
 	}
 	else if (command == 'splou') {
-		var d = new Date();
+		const date = new Date();
+		const d = new Date(
+			date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
+		);
+		console.log(d.getHours());
 		if (d.getHours() >= 0 && d.getHours() < 2) {
 			message.channel.send('It is time to splou.');
 		}
-		else{
+		else {
 			message.channel.send('It is not time to splou.');
 		}
 	}
+	else if (command == 'poll') {
+		const pollArgs = message.content.match(/(?:"[^"]*"|^[^"]*$)/g);
+		const options = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+		const pollQuestion = pollArgs.shift();
+		let pollString = '';
+		if (pollArgs.length > 10) {
+			message.channel.send('***You\'ve added too many choices, the limit is 10***');
+			return;
+		}
+		if (pollArgs.length === 0) {
+			message.channel.send('***Please add choices***');
+			return;
+		}
+		pollArgs.forEach((choice, index) => {
+			pollString += `${options[index]}: ${choice}\n\n`;
+		});
+
+		const embed = new Discord.MessageEmbed()
+			.setTitle(pollQuestion)
+			.setDescription(pollString);
+		console.log(pollArgs);
+		message.channel.send(embed).then(r => {
+			for(let i = 0; i < pollArgs.length; i++) {
+				r.react(options[i]);
+			}
+		});
+	}
 	else {
-		message.channel.send('Available Commands: '
-		+ '\n\tzz javascript: Welcome message.'
-		+ '\n\tzz members: Displays total members and total members online.'
-		+ '\n\tzz roll [n]: Rolls n dice. Leave blank for 1.'
-		+ '\n\tzz escape: YOU MUST ESCAPE FROM THE TARKOV!'
-		+ '\n\tzz rank: Displays karma leaderboard for server.'
-		+ '\n\tzz @member ++: Add karma to user. Cannot add karma to yourself.'
-		+ '\n\tzz @member --: Subtract karma from user.'
-		+ '\n\tzz top: Danna dan-dan dan-dan dan-nana-nan.'
-		+ '\n\tzz reddit [subreddit] [n]: Gets n top posts from subreddit for the day.'
-		+ '\n\tzz splou: Tryna splou?'
-		+ '\n\tzz help: Displays commands.');
+		message.channel.send(
+			'```Available Commands: ' +
+			'\n\tzz javascript: Welcome message.' +
+			'\n\tzz members: Displays total members and total members online.' +
+			'\n\tzz roll [n]: Rolls n dice. Leave blank for 1.' +
+			'\n\tzz escape: YOU MUST ESCAPE FROM THE TARKOV!' +
+			'\n\tzz rank: Displays karma leaderboard for server.' +
+			'\n\tzz @member ++: Add karma to user. Cannot add karma to yourself.' +
+			'\n\tzz @member --: Subtract karma from user.' +
+			'\n\tzz top: Danna dan-dan dan-dan dan-nana-nan.' +
+			'\n\tzz reddit [subreddit] [n]: Gets n top posts from subreddit for the day.' +
+			'\n\tzz splou: Tryna splou?' +
+			'\n\tzz poll: Create a poll in the format \'zz poll "question" "choice1" "choice2"\'' +
+			'\n\tzz news: Get current top HackerNews article.' +
+			'\n\tzz help: Displays commands.```',
+		);
 	}
 });
 
