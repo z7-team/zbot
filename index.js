@@ -5,6 +5,7 @@ const admin = require('firebase-admin');
 const { prefix, token, rsecret, rid, reduser, rpass } = require('./config.json');
 const snoowrap = require('snoowrap');
 const fetch = require('node-fetch');
+const axios = require('axios');
 const serviceAccount = require('./z7-bot-db-auth.json');
 
 // firebase db
@@ -145,6 +146,25 @@ client.on('message', async (message) => {
 	else if (command == 'top') {
 		message.channel.send('https://www.youtube.com/watch?v=Vppbdf-qtGU');
 	}
+	else if (command == 'qod') {
+		const url = 'https://quotes.rest/qod';
+
+		await axios({
+			method:'get',
+			url: url,
+			headers: { 'Accept' : 'application/json' },
+		}).then(res=>{
+			const quote = res.data.contents.quotes[0].quote;
+			const author = res.data.contents.quotes[0].author;
+			const embed = new Discord.MessageEmbed()
+				.setColor('EBBE08')
+				.setTitle('Quote of the day:')
+				.setDescription('\"' + quote + '\"\n—' + author);
+			message.channel.send(embed);
+		}).catch(err => {
+			console.log(err);
+		});
+	}
 	else if (command == 'reddit') {
 		if (!args.length) {
 			await r.getSubreddit('memes').getTop({ time: 'day', limit: 1 }).map(post =>{
@@ -209,9 +229,9 @@ client.on('message', async (message) => {
 		});
 	}
 	else {
-		message.channel.send(
-			'```Available Commands: ' +
-			'\n\tzz javascript: Welcome message.' +
+		const embed = new Discord.MessageEmbed()
+			.setTitle('Available Commands')
+			.setDescription('\n\tzz javascript: Welcome message.' +
 			'\n\tzz members: Displays total members and total members online.' +
 			'\n\tzz roll [n]: Rolls n dice. Leave blank for 1.' +
 			'\n\tzz escape: YOU MUST ESCAPE FROM THE TARKOV!' +
@@ -223,8 +243,9 @@ client.on('message', async (message) => {
 			'\n\tzz splou: Tryna splou?' +
 			'\n\tzz poll: Create a poll in the format \'zz poll "question" "choice1" "choice2"\'' +
 			'\n\tzz news: Get current top HackerNews article.' +
-			'\n\tzz help: Displays commands.```',
-		);
+			'\n\tzz qod: Gets quote of the day.' +
+			'\n\tzz help: Displays commands.');
+		message.channel.send(embed);
 	}
 });
 
