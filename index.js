@@ -31,9 +31,9 @@ client.once('ready', () => {
 });
 
 // welcome message
-client.on('guildMemberAdd', member =>{
+/*client.on('guildMemberAdd', member =>{
 	member.guild.channels.get('channelID').send('Welcome ' + member.nickname + ' to the Z7 army!');
-});
+});*/
 
 // commands
 client.on('message', async (message) => {
