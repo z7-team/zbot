@@ -5,7 +5,6 @@ const admin = require('firebase-admin');
 const { prefix, token, rsecret, rid, reduser, rpass } = require('./config.json');
 const snoowrap = require('snoowrap');
 const fetch = require('node-fetch');
-const axios = require('axios');
 const serviceAccount = require('./z7-bot-db-auth.json');
 
 // firebase db
@@ -112,6 +111,27 @@ client.on('message', async (message) => {
 
 		const pointStr = karma === 1 ? 'point' : 'points';
 		await message.channel.send(`${mention.username} you now have ${karma} ${pointStr}`);
+	}
+	else if (command == 'qod') {
+		const url = 'https://quotes.rest/qod';
+		await fetch(url)
+			.then((response) =>{
+				if (response.ok) {
+					return response.json();
+				}
+				throw new Error(response);
+			})
+			.then((response) =>{
+				console.log(response);
+				const quote = response.contents.quotes[0].quote;
+				const author = response.contents.quotes[0].author;
+				const embed = new Discord.MessageEmbed()
+					.setColor('EBBE08')
+					.setTitle('Quote of the day:')
+					.setDescription('\"' + quote + '\"\n—' + author);
+				message.channel.send(embed);
+			})
+			.catch(console.error);
 	}
 	else if (command == 'news') {
 		let bestStoryId;
