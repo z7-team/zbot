@@ -166,25 +166,6 @@ client.on('message', async (message) => {
 	else if (command == 'top') {
 		message.channel.send('https://www.youtube.com/watch?v=Vppbdf-qtGU');
 	}
-	else if (command == 'qod') {
-		const url = 'https://quotes.rest/qod';
-
-		await axios({
-			method:'get',
-			url: url,
-			headers: { 'Accept' : 'application/json' },
-		}).then(res=>{
-			const quote = res.data.contents.quotes[0].quote;
-			const author = res.data.contents.quotes[0].author;
-			const embed = new Discord.MessageEmbed()
-				.setColor('EBBE08')
-				.setTitle('Quote of the day:')
-				.setDescription('\"' + quote + '\"\n—' + author);
-			message.channel.send(embed);
-		}).catch(err => {
-			console.log(err);
-		});
-	}
 	else if (command === 'move') {
 		const channelCache = message.guild.channels.cache;
 		const channelName = message.content.match(/"(.*?)"/);
