@@ -185,6 +185,22 @@ client.on('message', async (message) => {
 			console.log(err);
 		});
 	}
+	else if (command === 'move') {
+		const channelCache = message.guild.channels.cache;
+		const channelName = message.content.match(/"(.*?)"/);
+		let channelId;
+		for (const key of channelCache.keys()) {
+			const channel = channelCache.get(key);
+			if (channelName[1] === channel.name) {
+				channelId = channel.id;
+			}
+		}
+		console.log(channelId);
+		message.mentions.members.forEach(member => {
+			const voiceState = new Discord.VoiceState(message.guild, { user_id: member.id });
+			voiceState.setChannel(channelId, null);
+		});
+	}
 	else if (command == 'reddit') {
 		if (!args.length) {
 			await r.getSubreddit('memes').getTop({ time: 'day', limit: 1 }).map(post =>{
