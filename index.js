@@ -64,6 +64,18 @@ client.on('message', async (message) => {
 		}
 		message.channel.send(msg);
 	}
+	/*else if (command == 'blackdice'){
+		const embed = new Discord.MessageEmbed();
+		var gameOver = false;
+		var ucount = 0;
+		var ecount = 0;
+		var it = 0
+		while(!gameOver){
+			if (it === 0){
+
+			}
+		}
+	}*/
 	else if (command === 'rank') {
 		const usersRef = db.collection(message.guild.name);
 		const users = await usersRef.orderBy('karma', 'desc').get();
@@ -219,7 +231,7 @@ client.on('message', async (message) => {
 		}
 	}
 	else if (command == 'poll') {
-		const pollArgs = message.content.match(/(?:("|')[^("|')]*("|')|^[^("|')]*$)/g);
+		const pollArgs = message.content.match(/\[.*?\]/g);
 		const options = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
 		const pollQuestion = pollArgs.shift();
 		let pollString = '';
@@ -236,8 +248,8 @@ client.on('message', async (message) => {
 		});
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle(pollQuestion.replace(/['"]+/g, ''))
-			.setDescription(pollString.replace(/['"]+/g, ''));
+			.setTitle(pollQuestion.replace(/[\[\]']+/g, ''))
+			.setDescription(pollString.replace(/[\[\]']+/g, ''));
 		console.log(pollArgs);
 		message.channel.send(embed).then(r => {
 			for(let i = 0; i < pollArgs.length; i++) {
