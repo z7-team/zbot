@@ -147,17 +147,34 @@ client.on('message', async (message) => {
 	}
 	else if (command == 'news') {
 		let bestStoryId;
-		await fetch('https://hacker-news.firebaseio.com/v0/beststories.json')
-			.then((response) => {
-				if (response.ok) {
+		if(args[0]) {
+			let query = encodeURIComponent([...args]);
+			await fetch(
+				`https://hn.algolia.com/api/v1/search?query=${query}&hitsPerPage=2&page=0&tags=story`
+				)
+				.then((response) => {
+					if (response.ok) {
 					return response.json();
-				}
-				throw new Error(response);
-			})
-			.then((response) => {
-				bestStoryId = response[0];
-			})
-			.catch(console.error);
+					}
+					throw new Error(response);
+				})
+				.then((response) => {
+					bestStoryId = response.hits[0].objectID || response.hits[0].story_id;
+				})
+				.catch(console.error);
+		} else {
+			await fetch('https://hacker-news.firebaseio.com/v0/beststories.json')
+				.then((response) => {
+					if (response.ok) {
+						return response.json();
+					}
+					throw new Error(response);
+				})
+				.then((response) => {
+					bestStoryId = response[0];
+				})
+				.catch(console.error);
+		}
 		await fetch(
 			`https://hacker-news.firebaseio.com/v0/item/${bestStoryId}.json`)
 			.then((response) => {
