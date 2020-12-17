@@ -288,7 +288,7 @@ client.on('message', async (message) => {
 			'\n\tzz reddit [subreddit] [n]: Gets n top posts from subreddit for the day.' +
 			'\n\tzz splou: Tryna splou?' +
 			'\n\tzz poll: Create a poll in the format \'zz poll "question" "choice1" "choice2"\'' +
-			'\n\tzz news: Get current top HackerNews article.' +
+			'\n\tzz news [query]: Get current top HackerNews articles.' +
 			'\n\tzz qod: Gets quote of the day.' +
 			'\n\tzz help: Displays commands.');
 		message.channel.send(embed);
