@@ -143,16 +143,19 @@ client.on('message', async (message) => {
 
 		if (args[0] === "off") {
 			await userRef.update({ entrance: false });
+			message.channel.send("You turned off your entrance music");
 			return;
 		}
 
 		if (args[0] === "on") {
 			await userRef.update({ entrance: true });
+			message.channel.send("You turned on your entrance music");
 			return;
 		}
 
 		let entranceUrl = args[0] || "";
 		await userRef.update({ entranceUrl, entrance: true });
+		message.channel.send("New entrance added and enable");
 	}
 	else if (command == 'qod') {
 		const url = 'https://quotes.rest/qod';
