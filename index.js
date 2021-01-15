@@ -130,7 +130,7 @@ client.on('message', async (message) => {
 		const pointStr = karma === 1 ? 'point' : 'points';
 		await message.channel.send(`${mention.username} you now have ${karma} ${pointStr}`);
 	}
-	else if ('entrance') {
+	else if (command === 'entrance') {
 		const userRef = db.collection(message.guild.name).doc(message.author.id);
 		const snapshot = await userRef.get();
 		const data = snapshot.data();
