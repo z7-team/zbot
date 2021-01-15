@@ -6,6 +6,7 @@ const { prefix, token, rsecret, rid, reduser, rpass } = require('./config.json')
 const snoowrap = require('snoowrap');
 const fetch = require('node-fetch');
 const serviceAccount = require('./z7-bot-db-auth.json');
+const ytdl = require("ytdl-core-discord");
 
 // firebase db
 admin.initializeApp({
@@ -116,13 +117,42 @@ client.on('message', async (message) => {
 		else if (args[0] === '--') {
 			karma--;
 		}
-		await userRef.set({
-			karma,
-			id: mention.id.toString(),
-		});
+		if (!data) {
+			await userRef.set({
+				karma,
+				id: mention.id.toString(),
+			});
+		}
+		else {
+			await userRef.update({ karma });
+		}
 
 		const pointStr = karma === 1 ? 'point' : 'points';
 		await message.channel.send(`${mention.username} you now have ${karma} ${pointStr}`);
+	}
+	else if ('entrance') {
+		const userRef = db.collection(message.guild.name).doc(message.author.id);
+		const snapshot = await userRef.get();
+		const data = snapshot.data();
+
+		if (!data) {
+			await userRef.set({
+				id: message.author.id.toString(),
+			});
+		}
+
+		if (args[0] === "off") {
+			await userRef.update({ entrance: false });
+			return;
+		}
+
+		if (args[0] === "on") {
+			await userRef.update({ entrance: true });
+			return;
+		}
+
+		let entranceUrl = args[0] || "";
+		await userRef.update({ entranceUrl, entrance: true });
 	}
 	else if (command == 'qod') {
 		const url = 'https://quotes.rest/qod';
@@ -205,7 +235,6 @@ client.on('message', async (message) => {
 				channelId = channel.id;
 			}
 		}
-		console.log(channelId);
 		message.mentions.members.forEach(member => {
 			const voiceState = new Discord.VoiceState(message.guild, { user_id: member.id });
 			voiceState.setChannel(channelId, null);
@@ -239,7 +268,6 @@ client.on('message', async (message) => {
 		const d = new Date(
 			date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
 		);
-		console.log(d.getHours());
 		if (d.getHours() >= 0 && d.getHours() < 2) {
 			message.channel.send('It is time to splou.');
 		}
@@ -267,7 +295,6 @@ client.on('message', async (message) => {
 		const embed = new Discord.MessageEmbed()
 			.setTitle(pollQuestion.replace(/[\[\]']+/g, ''))
 			.setDescription(pollString.replace(/[\[\]']+/g, ''));
-		console.log(pollArgs);
 		message.channel.send(embed).then(r => {
 			for(let i = 0; i < pollArgs.length; i++) {
 				r.react(options[i]);
@@ -289,11 +316,38 @@ client.on('message', async (message) => {
 			'\n\tzz splou: Tryna splou?' +
 			'\n\tzz poll: Create a poll in the format \'zz poll "question" "choice1" "choice2"\'' +
 			'\n\tzz news [query]: Get current top HackerNews articles.' +
+			'\n\tzz entrance [on, off, youtubeURL]: When you want to join a voice channel with a bang' +
 			'\n\tzz qod: Gets quote of the day.' +
 			'\n\tzz help: Displays commands.');
 		message.channel.send(embed);
 	}
 });
 
+client.on("voiceStateUpdate", async (oldState, newState) => {
+	const newUserChannel = newState.channel;
+
+	if (newUserChannel != null) {
+		const userRef = db.collection(newState.guild.name).doc(newState.member.id);
+		const snapshot = await userRef.get();
+		const data = snapshot.data();
+		const url = data && data.entranceUrl;
+		if (url && ytdl.validateURL(url) && data.entrance) {
+			newUserChannel
+				.join()
+				.then((connection) => {
+					play(connection, url);
+				})
+				.catch((reject) => {
+					console.error(reject);
+				});
+		}
+	}
+});
+
+async function play(connection, url) {
+	connection.play(await ytdl(url).catch(), {
+		type: "opus",
+	});
+}
 
 client.login(token);

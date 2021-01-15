@@ -14,9 +14,11 @@
 		"discord.js": "^12.4.1",
 		"firebase-admin": "^9.3.0",
 		"node-fetch": "^2.6.1",
-		"snoowrap": "^1.21.0"
+		"snoowrap": "^1.21.0",
+		"ytdl-core-discord": "^1.2.5"
 	},
 	"devDependencies": {
+		"@discordjs/opus": "^0.3.3",
 		"eslint": "^7.12.1",
 		"nodemon": "^2.0.6"
 	}
