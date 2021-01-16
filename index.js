@@ -328,8 +328,9 @@ client.on('message', async (message) => {
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
 	const newUserChannel = newState.channel;
+	const oldUserChannel = oldState.channel;
 
-	if (newUserChannel != null) {
+	if (oldUserChannel == undefined && newUserChannel !== undefined) {
 		const userRef = db.collection(newState.guild.name).doc(newState.member.id);
 		const snapshot = await userRef.get();
 		const data = snapshot.data();
@@ -348,9 +349,11 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 });
 
 async function play(connection, url) {
+	
 	connection.play(await ytdl(url).catch(), {
 		type: "opus",
 	});
+	
 }
 
 client.login(token);
