@@ -349,8 +349,8 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 });
 
 async function play(connection, url) {
-	
-	connection.play(await ytdl(url).catch(), {
+	const seconds = new URL(url).searchParams.get('t') || 0;
+	connection.play(await ytdl(url, { begin: `${seconds}S` }).catch(), {
 		type: "opus",
 	});
 	
