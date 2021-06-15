@@ -349,12 +349,11 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 });
 
 async function play(connection, url) {
-	const seconds = `${new URL(url).searchParams.get('t')}S` || '0S';
+	const seconds = new URL(url).searchParams.get('t') || '0';
 	connection.play(await ytdl(url).catch(), {
 		type: "opus",
-		begin: `${seconds}S` 
+		begin: `${seconds}S`
 	});
-	
 }
 
 client.login(token);
