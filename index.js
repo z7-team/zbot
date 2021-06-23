@@ -206,7 +206,7 @@ client.on('message', async (message) => {
 				}
 
 				// construct the discord message embed
-				const topResult = response.list[0]
+				const topResult = response.list.reduce((prev, current) => (prev.thumbs_up > current.thumbs_up) ? prev : current)
 				const definition = topResult.definition
 				const formattedDefinition = definition.replace(/\[(.*?)\]/g, replacer)
 				const example = topResult.example
