@@ -178,6 +178,58 @@ client.on('message', async (message) => {
 			})
 			.catch(console.error);
 	}
+	else if (command == 'urban') {
+		const query = args.join(' ')
+		const queryURIEncoded = encodeURIComponent(query)
+		const url = `https://api.urbandictionary.com/v0/define?term=${queryURIEncoded}`
+		await fetch(url)
+			.then((response) => {
+				if (response.ok) {
+					return response.json()
+				}
+				throw new Error(response)
+			})
+			.then((response) => {
+				// used for formatting definitions and examples to match urban dictionary format
+				function replacer(match, p1, p2, p3, offset, string) {
+					// p1 is nondigits, p2 digits, and p3 non-alphanumerics
+					const term = match.slice(1, -1)
+					const termURIEncoded = encodeURIComponent(term)
+					return `[${term}](https://www.urbandictionary.com/define.php?term=${termURIEncoded})`;
+				}
+
+				// check if no results were found
+				const isEmpty = response.list.length === 0
+				if (isEmpty) {
+					message.channel.send(`No results found for "${query}"`)
+					return
+				}
+
+				// construct the discord message embed
+				const topResult = response.list[0]
+				const definition = topResult.definition
+				const formattedDefinition = definition.replace(/\[(.*?)\]/g, replacer)
+				const example = topResult.example
+				const formattedExample = example.replace(/\[(.*?)\]/g, replacer)
+				const link = topResult.permalink
+
+				const title = topResult.word
+				const description = formattedDefinition
+
+				const embed = new Discord.MessageEmbed()
+					.setColor('#efff00')
+					.setTitle(title)
+					.setDescription(description)
+					.setURL(link)
+					.addFields({
+						name: 'examples',
+						value: formattedExample
+					})
+
+				message.channel.send(embed)
+			})
+			.catch(console.error);
+	}
 	else if (command == 'news') {
 		let bestStoryId;
 		if(args[0]) {
