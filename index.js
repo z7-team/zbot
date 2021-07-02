@@ -221,10 +221,13 @@ client.on('message', async (message) => {
 					.setTitle(title)
 					.setDescription(description)
 					.setURL(link)
-					.addFields({
+
+				if (formattedExample) {
+					embed.addFields({
 						name: 'examples',
 						value: formattedExample
 					})
+				}
 
 				message.channel.send(embed)
 			})
