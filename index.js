@@ -337,6 +337,15 @@ client.on('message', async (message) => {
 		const url = args[0];
 		let userChannel = message.member.voice.channel;
 
+		if (!args.length){
+			message.channel.send('Please provide a song link.');
+		}
+		else{
+			if (!ytdl.validateURL(url)){
+			message.channel.send('Must provide a YouTube link.');
+			}
+		}
+		
 		if (url && ytdl.validateURL(url)) {
 			userChannel
 				.join()
@@ -391,6 +400,7 @@ client.on('message', async (message) => {
 			'\n\tzz news [query]: Get current top HackerNews articles.' +
 			'\n\tzz entrance [on, off, youtubeURL]: When you want to join a voice channel with a bang' +
 			'\n\tzz qod: Gets quote of the day.' +
+			'\n\tzz play [link]: plays song from youtube url in current voice channel' +
 			'\n\tzz help: Displays commands.');
 		message.channel.send(embed);
 	}
