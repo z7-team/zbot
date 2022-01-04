@@ -333,30 +333,30 @@ client.on('message', async (message) => {
 			message.channel.send('It is not time to splou.');
 		}
 	}
-	else if (command == 'play'){
-		const url = args[0];
-		let userChannel = message.member.voice.channel;
+	// else if (command == 'play'){
+	// 	const url = args[0];
+	// 	let userChannel = message.member.voice.channel;
 
-		if (!args.length){
-			message.channel.send('Please provide a song link.');
-		}
-		else{
-			if (!ytdl.validateURL(url)){
-			message.channel.send('Must provide a YouTube link.');
-			}
-		}
+	// 	if (!args.length){
+	// 		message.channel.send('Please provide a song link.');
+	// 	}
+	// 	else{
+	// 		if (!ytdl.validateURL(url)){
+	// 		message.channel.send('Must provide a YouTube link.');
+	// 		}
+	// 	}
 		
-		if (url && ytdl.validateURL(url)) {
-			userChannel
-				.join()
-				.then((connection) => {
-					play(connection, url);
-				})
-				.catch((reject) => {
-					console.error(reject);
-				});
-	}
-	}
+	// 	if (url && ytdl.validateURL(url)) {
+	// 		userChannel
+	// 			.join()
+	// 			.then((connection) => {
+	// 				play(connection, url);
+	// 			})
+	// 			.catch((reject) => {
+	// 				console.error(reject);
+	// 			});
+	// 	}
+	// }
 	else if (command == 'poll') {
 		const pollArgs = message.content.match(/\[.*?\]/g);
 		const options = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
@@ -400,7 +400,6 @@ client.on('message', async (message) => {
 			'\n\tzz news [query]: Get current top HackerNews articles.' +
 			'\n\tzz entrance [on, off, youtubeURL]: When you want to join a voice channel with a bang' +
 			'\n\tzz qod: Gets quote of the day.' +
-			'\n\tzz play [link]: plays song from youtube url in current voice channel' +
 			'\n\tzz help: Displays commands.');
 		message.channel.send(embed);
 	}
