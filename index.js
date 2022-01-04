@@ -333,6 +333,21 @@ client.on('message', async (message) => {
 			message.channel.send('It is not time to splou.');
 		}
 	}
+	else if (command == 'play'){
+		const url = args[0];
+		let userChannel = message.member.voice.channel;
+
+		if (url && ytdl.validateURL(url)) {
+			userChannel
+				.join()
+				.then((connection) => {
+					play(connection, url);
+				})
+				.catch((reject) => {
+					console.error(reject);
+				});
+	}
+	}
 	else if (command == 'poll') {
 		const pollArgs = message.content.match(/\[.*?\]/g);
 		const options = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
