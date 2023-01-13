@@ -2,11 +2,12 @@
 // index.js
 const Discord = require('discord.js');
 const admin = require('firebase-admin');
-const { prefix, token, rsecret, rid, reduser, rpass } = require('./config.json');
+const { prefix, token, rsecret, rid, reduser, rpass, openaikey } = require('./config.json');
 const snoowrap = require('snoowrap');
 const fetch = require('node-fetch');
 const serviceAccount = require('./z7-bot-db-auth.json');
 const ytdl = require("ytdl-core-discord");
+const OpenAI = require("openai");
 
 // firebase db
 admin.initializeApp({
@@ -14,6 +15,12 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
+// OpenAI Config
+const configuration = new OpenAI.Configuration({
+	organization: "org-pUGGBzLbAkPSvpFGsmT718re",
+	apiKey: openaikey,
+});
+const openai = new OpenAI.OpenAIApi(configuration);
 
 // initialize reddit api
 const r = new snoowrap({
@@ -33,7 +40,7 @@ client.once('ready', () => {
 
 // welcome message
 /*client.on('guildMemberAdd', member =>{
-	member.guild.channels.get('channelID').send('Welcome ' + member.nickname + ' to the Z7 army!');
+		member.guild.channels.get('channelID').send('Welcome ' + member.nickname + ' to the Z7 army!');
 });*/
 
 // commands
@@ -66,16 +73,16 @@ client.on('message', async (message) => {
 		message.channel.send(msg);
 	}
 	/*else if (command == 'blackdice'){
-		const embed = new Discord.MessageEmbed();
-		var gameOver = false;
-		var ucount = 0;
-		var ecount = 0;
-		var it = 0
-		while(!gameOver){
-			if (it === 0){
+			const embed = new Discord.MessageEmbed();
+			var gameOver = false;
+			var ucount = 0;
+			var ecount = 0;
+			var it = 0
+			while(!gameOver){
+					if (it === 0){
 
+					}
 			}
-		}
 	}*/
 	else if (command === 'rank') {
 		const usersRef = db.collection(message.guild.name);
@@ -160,13 +167,13 @@ client.on('message', async (message) => {
 	else if (command == 'qod') {
 		const url = 'https://quotes.rest/qod';
 		await fetch(url)
-			.then((response) =>{
+			.then((response) => {
 				if (response.ok) {
 					return response.json();
 				}
 				throw new Error(response);
 			})
-			.then((response) =>{
+			.then((response) => {
 				console.log(response);
 				const quote = response.contents.quotes[0].quote;
 				const author = response.contents.quotes[0].author;
@@ -221,10 +228,13 @@ client.on('message', async (message) => {
 					.setTitle(title)
 					.setDescription(description)
 					.setURL(link)
-					.addFields({
+
+				if (formattedExample) {
+					embed.addFields({
 						name: 'examples',
 						value: formattedExample
 					})
+				}
 
 				message.channel.send(embed)
 			})
@@ -232,14 +242,14 @@ client.on('message', async (message) => {
 	}
 	else if (command == 'news') {
 		let bestStoryId;
-		if(args[0]) {
+		if (args[0]) {
 			let query = encodeURIComponent([...args]);
 			await fetch(
 				`https://hn.algolia.com/api/v1/search?query=${query}&hitsPerPage=2&page=0&tags=story`
-				)
+			)
 				.then((response) => {
 					if (response.ok) {
-					return response.json();
+						return response.json();
 					}
 					throw new Error(response);
 				})
@@ -277,6 +287,31 @@ client.on('message', async (message) => {
 			})
 			.catch(console.error);
 	}
+	else if (command == "c") {
+		if (args[0]) {
+			const postData = {
+				model: "text-davinci-003",
+				prompt: args.join(' '),
+				temperature: 0,
+				max_tokens: 1000
+			};
+			console.log(JSON.stringify(postData));
+			fetch('https://api.openai.com/v1/completions', {
+				method: 'POST',
+				body: JSON.stringify(postData),
+				headers: {
+					Authorization: `Bearer ${openaikey}`,
+					'content-type': 'application/json'
+				}
+			})
+				.then(data => data.json())
+				.then(response => {
+					console.log(response);
+					message.channel.send(response.choices[0].text);
+				})
+				.catch(console.error);
+		}
+	}
 	else if (command == 'top') {
 		message.channel.send('https://www.youtube.com/watch?v=Vppbdf-qtGU');
 	}
@@ -297,24 +332,24 @@ client.on('message', async (message) => {
 	}
 	else if (command == 'reddit') {
 		if (!args.length) {
-			await r.getSubreddit('memes').getTop({ time: 'day', limit: 1 }).map(post =>{
+			await r.getSubreddit('memes').getTop({ time: 'day', limit: 1 }).map(post => {
 				message.channel.send(post.url);
 			});
 		}
 		else if (args.length == 1) {
-			await r.getSubreddit(args[0]).getTop({ time: 'day', limit: 1 }).map(post=>{
+			await r.getSubreddit(args[0]).getTop({ time: 'day', limit: 1 }).map(post => {
 				message.channel.send(post.url);
 			});
 		}
 		else if (args.length == 2 && args[1].length == 1) {
-			await r.getSubreddit(args[0]).getTop({ time:'day', limit: parseInt(args[1]) }).map(post=>{
+			await r.getSubreddit(args[0]).getTop({ time: 'day', limit: parseInt(args[1]) }).map(post => {
 				// for (var i = 0; i < parseInt(args[1]); i++) {
-				// 	message.channel.send(post[i].url);
+				//      message.channel.send(post[i].url);
 				// }
 				message.channel.send(post.url);
 			});
 		}
-		else{
+		else {
 			message.channel.send('Please check your arguments and try again.');
 		}
 	}
@@ -330,6 +365,30 @@ client.on('message', async (message) => {
 			message.channel.send('It is not time to splou.');
 		}
 	}
+	// else if (command == 'play'){
+	//      const url = args[0];
+	//      let userChannel = message.member.voice.channel;
+
+	//      if (!args.length){
+	//              message.channel.send('Please provide a song link.');
+	//      }
+	//      else{
+	//              if (!ytdl.validateURL(url)){
+	//              message.channel.send('Must provide a YouTube link.');
+	//              }
+	//      }
+
+	//      if (url && ytdl.validateURL(url)) {
+	//              userChannel
+	//                      .join()
+	//                      .then((connection) => {
+	//                              play(connection, url);
+	//                      })
+	//                      .catch((reject) => {
+	//                              console.error(reject);
+	//                      });
+	//      }
+	// }
 	else if (command == 'poll') {
 		const pollArgs = message.content.match(/\[.*?\]/g);
 		const options = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
@@ -351,7 +410,7 @@ client.on('message', async (message) => {
 			.setTitle(pollQuestion.replace(/[\[\]']+/g, ''))
 			.setDescription(pollString.replace(/[\[\]']+/g, ''));
 		message.channel.send(embed).then(r => {
-			for(let i = 0; i < pollArgs.length; i++) {
+			for (let i = 0; i < pollArgs.length; i++) {
 				r.react(options[i]);
 			}
 		});
@@ -360,20 +419,21 @@ client.on('message', async (message) => {
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Available Commands')
 			.setDescription('\n\tzz javascript: Welcome message.' +
-			'\n\tzz members: Displays total members and total members online.' +
-			'\n\tzz roll [n]: Rolls n dice. Leave blank for 1.' +
-			'\n\tzz escape: YOU MUST ESCAPE FROM THE TARKOV!' +
-			'\n\tzz rank: Displays karma leaderboard for server.' +
-			'\n\tzz @member ++: Add karma to user. Cannot add karma to yourself.' +
-			'\n\tzz @member --: Subtract karma from user.' +
-			'\n\tzz top: Danna dan-dan dan-dan dan-nana-nan.' +
-			'\n\tzz reddit [subreddit] [n]: Gets n top posts from subreddit for the day.' +
-			'\n\tzz splou: Tryna splou?' +
-			'\n\tzz poll: Create a poll in the format \'zz poll "question" "choice1" "choice2"\'' +
-			'\n\tzz news [query]: Get current top HackerNews articles.' +
-			'\n\tzz entrance [on, off, youtubeURL]: When you want to join a voice channel with a bang' +
-			'\n\tzz qod: Gets quote of the day.' +
-			'\n\tzz help: Displays commands.');
+				'\n\tzz members: Displays total members and total members online.' +
+				'\n\tzz roll [n]: Rolls n dice. Leave blank for 1.' +
+				'\n\tzz escape: YOU MUST ESCAPE FROM THE TARKOV!' +
+				'\n\tzz rank: Displays karma leaderboard for server.' +
+				'\n\tzz @member ++: Add karma to user. Cannot add karma to yourself.' +
+				'\n\tzz @member --: Subtract karma from user.' +
+				'\n\tzz top: Danna dan-dan dan-dan dan-nana-nan.' +
+				'\n\tzz reddit [subreddit] [n]: Gets n top posts from subreddit for the day.' +
+				'\n\tzz splou: Tryna splou?' +
+				'\n\tzz poll: Create a poll in the format \'zz poll "question" "choice1" "choice2"\'' +
+				'\n\tzz news [query]: Get current top HackerNews articles.' +
+				'\n\tzz entrance [on, off, youtubeURL]: When you want to join a voice channel with a bang' +
+				'\n\tzz qod: Gets quote of the day.' +
+				'\n\tzz c: Ask ChatGPT.' +
+				'\n\tzz help: Displays commands.');
 		message.channel.send(embed);
 	}
 });
